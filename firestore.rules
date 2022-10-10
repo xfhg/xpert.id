@@ -1,0 +1,127 @@
+rules_version='2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+   function isMine() {
+      return resource.id == request.auth.uid;
+    }
+
+    function imCreating() {
+      return request.resource.id == request.auth.uid;
+    }
+    function isAuth() {
+      return request.auth.uid != null;
+    }
+
+    //  function hasPioneerSubs() {
+    //   return request.auth.token.stripeRole == "pioneer";
+    // }
+
+   // function hasTimestamp() {
+   //    return request.resource.data.timestamp == request.time;
+   //  }
+   // function isCalm() {
+   //    return request.time > resource.data.timestamp + duration.value(5, 's');
+   //  }
+  
+    
+    // match /{document=**} {
+    //   allow read;
+    // }
+
+
+     // ----------------------------------------------------------------------------------
+    
+    match /users/{document=**} {
+     allow read: if isMine();
+     allow create: if imCreating();
+     allow update: if isMine() ;
+ 		}
+    match /notifications/{document=**} {
+     allow read;
+ 		}
+
+    // ----------------------------------------------------------------------------------
+
+    match /xperts/{document=**} {
+     allow read: if isMine();
+     allow create: if imCreating() ;
+     allow update: if isMine() ;
+ 		}
+
+    match /xpublic/{document=**} {
+     allow read;      
+     allow update: if isMine() ;
+ 	  }
+
+    match /xusernames/{document=**} {
+     allow read;      
+ 	  }
+
+    // ----------------------------------------------------------------------------------
+
+
+    match /talent/{document=**} {
+     allow read: if isMine();
+     allow create: if imCreating() ;
+     allow update: if isMine() ;
+ 		}
+
+    match /academy/{document=**} {
+     allow read: if isMine();
+     allow create: if imCreating() ;
+     allow update: if isMine() ;
+ 		}
+
+    // ----------------------------------------------------------------------------------
+
+    match /bits/{document=**} {
+     allow read;
+     allow create: if imCreating() ;
+     allow update: if isMine() ;
+ 		}
+
+    match /storms/{document=**} {
+     allow read: if isMine() ;
+ 		}
+
+    // ----------------------------------------------------------------------------------
+    // public
+
+    match /xbits/{document=**} {
+     allow read;
+ 		}
+    match /xstorms/{document=**} {
+     allow read: if isAuth();
+ 		}
+    
+    match /system/{document=**} {
+     allow read;
+ 		}
+
+
+
+    // STRIPE EXTENSION
+
+    // match /customers/{uid} {
+    //   allow read: if request.auth.uid == uid;
+
+    //   match /checkout_sessions/{id} {
+    //     allow read, write: if request.auth.uid == uid;
+    //   }
+    //   match /subscriptions/{id} {
+    //     allow read: if request.auth.uid == uid;
+    //   }
+    // }
+
+    // match /products/{id} {
+    //   allow read: if true;
+
+    //   match /prices/{id} {
+    //     allow read: if true;
+    //   }
+    // }
+  
+
+  }
+}
